@@ -279,6 +279,15 @@ Function ValidateInstallDir
   Call StrPoint # function from Utils.nsh
   ${if} $Pointer == "-1"
     StrCpy $INSTDIR "$INSTDIR\${APP_DIR}"
+    # when called as the leave function of the directory page, the page copies the
+    # text of its folder field back to $INSTDIR afterwards, so update the field as well
+    ${IfNot} ${Silent}
+      Push $R0
+      FindWindow $R0 "#32770" "" $HWNDPARENT
+      GetDlgItem $R0 $R0 1019
+      SendMessage $R0 ${WM_SETTEXT} 0 "STR:$INSTDIR"
+      Pop $R0
+    ${EndIf}
   ${endif}
   # Make sure install dir is empty, avoids library conflicts from mixed installs
   Push $R0
